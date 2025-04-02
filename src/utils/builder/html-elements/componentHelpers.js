@@ -6,7 +6,7 @@ const componentHelpers = [
     html_code: `
       <section>
         <div class="relative bg-white">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6">
+          <div class="navbar-container">
             <div class="flex items-center justify-between py-6 md:justify-start md:space-x-10">
               <!-- Logo -->
               <div class="flex justify-start lg:w-0 lg:flex-1">
