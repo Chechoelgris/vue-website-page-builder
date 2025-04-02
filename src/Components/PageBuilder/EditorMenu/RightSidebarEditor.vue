@@ -38,7 +38,14 @@ const isHeadingElement = computed(() => {
 });
 
 const isNavbarElement = computed(() => {
-  return getElement.value?.classList.contains('navbar-component');
+  return getElement.value && getElement.value.classList?.contains('navbar-component');
+});
+
+// Cerrar el editor cuando se elimina el elemento
+watch(getElement, (newValue) => {
+  if (!newValue) {
+    emit('closeEditor');
+  }
 });
 </script>
 
