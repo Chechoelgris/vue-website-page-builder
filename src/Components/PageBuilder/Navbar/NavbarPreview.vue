@@ -5,6 +5,11 @@ import { usePageBuilderStateStore } from '@/stores/page-builder-state';
 const pageBuilderStateStore = usePageBuilderStateStore();
 const element = computed(() => pageBuilderStateStore.getElement);
 
+// Obtener la imagen del logo desde el PageBuilder
+const logoImage = computed(() => {
+  return pageBuilderStateStore.getBasePrimaryImage;
+});
+
 // Computed properties para obtener los datos del navbar
 const menuItems = computed(() => {
   try {
@@ -16,7 +21,6 @@ const menuItems = computed(() => {
 
 const ctaText = computed(() => element.value?.getAttribute('data-cta-text') || 'Contactar');
 const ctaUrl = computed(() => element.value?.getAttribute('data-cta-url') || '#');
-const logoUrl = computed(() => element.value?.getAttribute('data-logo-url') || 'https://via.placeholder.com/150x50');
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const logoUrl = computed(() => element.value?.getAttribute('data-logo-url') || '
         <!-- Logo -->
         <div class="flex justify-start lg:w-0 lg:flex-1">
           <a :href="ctaUrl" class="flex items-center">
-            <img class="h-8 w-auto sm:h-10" :src="logoUrl" alt="Logo">
+            <img class="h-8 w-auto sm:h-10" :src="logoImage" alt="Logo">
           </a>
         </div>
 

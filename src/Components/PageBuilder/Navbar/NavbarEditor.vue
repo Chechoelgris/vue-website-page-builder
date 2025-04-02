@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { usePageBuilderStateStore } from '@/stores/page-builder-state';
 import EditorAccordion from '../EditorMenu/EditorAccordion.vue';
+import ImageEditor from '@/Components/PageBuilder/EditorMenu/Editables/ImageEditor.vue';
 
 const pageBuilderStateStore = usePageBuilderStateStore();
 const element = computed(() => pageBuilderStateStore.getElement);
@@ -131,6 +132,12 @@ onMounted(() => {
 <template>
   <EditorAccordion title="Navegación">
     <div class="space-y-4 p-4">
+      <!-- Logo -->
+      <div class="border-b border-gray-200 pb-4">
+        <h3 class="text-sm font-medium text-gray-900 mb-3">Logo</h3>
+        <ImageEditor />
+      </div>
+
       <!-- Contenedor Styles -->
       <div class="border-b border-gray-200 pb-4">
         <h3 class="text-sm font-medium text-gray-900 mb-3">Ajustes del Contenedor</h3>
@@ -176,17 +183,6 @@ onMounted(() => {
             </option>
           </select>
         </div>
-      </div>
-
-      <!-- Existing content -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700">URL del Logo</label>
-        <input
-          type="text"
-          v-model="logoUrl"
-          @input="updateNavbar"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-myPrimaryLinkColor focus:ring-myPrimaryLinkColor sm:text-sm"
-        />
       </div>
 
       <!-- Menú Items -->

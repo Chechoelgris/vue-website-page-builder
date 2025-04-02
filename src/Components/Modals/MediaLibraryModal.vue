@@ -18,9 +18,15 @@ import SmallUniversalSpinner from '@/Components/Loaders/SmallUniversalSpinner.vu
 import { useMediaLibraryStore } from '@/stores/media-library';
 
 const mediaLibraryStore = useMediaLibraryStore();
+const uploadError = ref('');
+const isUploading = ref(false);
 
 const getCurrentImage = computed(() => {
   return mediaLibraryStore.getCurrentImage;
+});
+
+const getLocalImages = computed(() => {
+  return mediaLibraryStore.getLocalImages;
 });
 
 const selected = ref('Unsplash');
@@ -73,20 +79,43 @@ const firstButton = function () {
   emit('firstMediaButtonFunction');
 };
 
-// second button  function
+// second button function
 const secondButton = function () {
-  emit('secondMediaButtonFunction');
+  if (getCurrentImage.value) {
+    emit('secondMediaButtonFunction', getCurrentImage.value);
+  }
 };
 
 // third button function
 const thirdButton = function () {
   emit('thirdMediaButtonFunction');
 };
+
 //
 //
 const changeSelectedMenuTab = function (clicked) {
   selected.value = clicked;
 };
+
+const handleImageClick = function (image) {
+  if (!image) return;
+  mediaLibraryStore.setCurrentImage(image);
+  mediaLibraryStore.setCurrentPreviewImage(null);
+};
+
+// Cargar imágenes locales al montar el componente
+onMounted(() => {
+  if (selected.value === 'Media library') {
+    mediaLibraryStore.loadLocalImages();
+  }
+});
+
+// Recargar imágenes cuando se cambia a la pestaña Media Library
+watch(selected, (newValue) => {
+  if (newValue === 'Media library') {
+    mediaLibraryStore.loadLocalImages();
+  }
+});
 </script>
 
 <template>
@@ -288,7 +317,7 @@ const changeSelectedMenuTab = function (clicked) {
                         <!-- image upload - end -->
                       </template>
                       <template v-if="selected === 'Media library'">
-                        <!-- image gallary - start -->
+                        <!-- image gallery - start -->
                         <div class="w-full">
                           <div
                             class="overflow-y-scroll pr-1 border border-gray-200 rounded-lg md:min-h-[25rem] md:max-h-[25em] min-h-[20rem] max-h-[20rem]"
@@ -299,10 +328,29 @@ const changeSelectedMenuTab = function (clicked) {
                                   Media Library
                                 </p>
                               </div>
+                              <!-- Grid de imágenes -->
+                              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <div v-for="image in getLocalImages" 
+                                     :key="image.id" 
+                                     class="relative aspect-square cursor-pointer group"
+                                     @click="handleImageClick(image)">
+                                  <img :src="image.path" 
+                                       :alt="image.name"
+                                       class="w-full h-full object-cover rounded-lg border-2"
+                                       :class="{'border-myPrimaryLinkColor': getCurrentImage && getCurrentImage.id === image.id,
+                                               'border-transparent': !getCurrentImage || getCurrentImage.id !== image.id}"
+                                  />
+                                  <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded-lg"
+                                       :class="{'bg-opacity-20': getCurrentImage && getCurrentImage.id === image.id}"></div>
+                                </div>
+                                <div v-if="getLocalImages.length === 0" class="col-span-full text-center text-gray-500 py-8">
+                                  No hay imágenes disponibles en la biblioteca
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <!-- image gallary - end -->
+                        <!-- image gallery - end -->
                       </template>
                       <template v-if="selected === 'Unsplash'">
                         <!-- image gallary - start -->
@@ -338,7 +386,22 @@ const changeSelectedMenuTab = function (clicked) {
                       <div
                         class="pt-4 px-2 rounded-lg md:w-72 md:min-h-[42.5rem] md:max-h-[42.5rem] min-h-[15rem] max-h-[15rem] overflow-y-scroll bg-white border border-gray-200"
                       >
-                        No image has been selected.
+                        <div v-if="getCurrentImage" class="space-y-4">
+                          <div class="aspect-square w-full">
+                            <img 
+                              :src="getCurrentImage.path" 
+                              :alt="getCurrentImage.name"
+                              class="w-full h-full object-cover rounded-lg border border-gray-200"
+                            />
+                          </div>
+                          <div class="space-y-2">
+                            <p class="text-sm font-medium text-gray-900">{{ getCurrentImage.name }}</p>
+                            <p class="text-xs text-gray-500">Imagen local</p>
+                          </div>
+                        </div>
+                        <div v-else class="text-gray-500 text-sm">
+                          No image has been selected.
+                        </div>
                       </div>
                     </aside>
                     <!-- Details sidebar - media library end-->
@@ -361,51 +424,35 @@ const changeSelectedMenuTab = function (clicked) {
                   <!--content media library - end-->
 
                   <!-- Actions # start -->
-                  <template v-if="selected === 'Unsplash'">
-                    <div
-                      v-if="getCurrentImage && getCurrentImage.file"
-                      class="bg-slate-50 px-2 py-4 flex sm:justify-end justify-center"
-                    >
-                      <div
-                        class="sm:grid-cols-3 sm:items-end justify-end flex sm:flex-row myPrimaryGap sm:w-5/6 w-full"
-                      >
-                        <div v-if="firstButtonText">
-                          <button
-                            ref="firstButtonRef"
-                            class="mySecondaryButton"
-                            type="button"
-                            @click="firstButton"
-                          >
-                            {{ firstButtonText }}
-                          </button>
-                        </div>
+                  <div v-if="getCurrentImage" 
+                       class="bg-slate-50 px-2 py-4 flex sm:justify-end justify-center border-t border-gray-200">
+                    <div class="sm:grid-cols-3 sm:items-end justify-end flex sm:flex-row myPrimaryGap sm:w-5/6 w-full">
+                      <div v-if="firstButtonText">
+                        <button ref="firstButtonRef"
+                                class="mySecondaryButton"
+                                type="button"
+                                @click="firstButton">
+                          {{ firstButtonText }}
+                        </button>
+                      </div>
 
-                        <div v-if="secondButtonText">
-                          <button
-                            class="myPrimaryButton"
-                            type="button"
-                            @click="secondButton"
-                          >
-                            {{ secondButtonText }}
-                          </button>
-                        </div>
+                      <div v-if="secondButtonText">
+                        <button class="myPrimaryButton"
+                                type="button"
+                                @click="secondButton">
+                          {{ secondButtonText }}
+                        </button>
+                      </div>
 
-                        <div
-                          v-if="thirdButtonText"
-                          class="w-full"
-                        >
-                          <button
-                            class="myPrimaryDeleteButton"
-                            type="button"
-                            @click="thirdButton"
-                          >
-                            {{ thirdButtonText }}
-                          </button>
-                        </div>
+                      <div v-if="thirdButtonText" class="w-full">
+                        <button class="myPrimaryDeleteButton"
+                                type="button"
+                                @click="thirdButton">
+                          {{ thirdButtonText }}
+                        </button>
                       </div>
                     </div>
-                    <!-- Actions # end -->
-                  </template>
+                  </div>
                   <!-- Actions # end -->
                 </div>
               </div>

@@ -19,10 +19,6 @@ const descriptionMedia = ref('');
 const firstButtonMedia = ref('');
 const secondButtonMedia = ref(null);
 const thirdButtonMedia = ref(null);
-// set dynamic modal handle functions
-const firstMediaButtonFunction = ref(null);
-const secondMediaButtonFunction = ref(null);
-const thirdMediaButtonFunction = ref(null);
 
 // get current image from store
 const getBasePrimaryImage = computed(() => {
@@ -34,39 +30,66 @@ const handleAddImage = function () {
   showMediaLibraryModal.value = true;
 
   // set media library modal standards
-  titleMedia.value = `Media Library`;
+  titleMedia.value = 'Media Library';
   descriptionMedia.value = null;
-  firstButtonMedia.value = 'Close';
-  secondButtonMedia.value = 'Select image';
+  firstButtonMedia.value = 'Cancelar';
+  secondButtonMedia.value = 'Seleccionar imagen';
 
-  // handle click
-  firstMediaButtonFunction.value = function () {
-    // close media library modal
-    showMediaLibraryModal.value = false;
-  };
-  //
-  // handle click
-  secondMediaButtonFunction.value = function () {
-    isLoading.value = true;
-    pageBuilder.updateBasePrimaryImage({ type: 'unsplash' });
+  // Cargar imágenes locales al abrir el modal
+  mediaLibraryStore.loadLocalImages();
+};
 
-    // close media library modal
-    showMediaLibraryModal.value = false;
-    isLoading.value = false;
-  };
-  //
-  // end modal
+const handleCloseModal = () => {
+  showMediaLibraryModal.value = false;
+  mediaLibraryStore.setCurrentImage(null);
+};
+
+const handleImageSelect = async (image) => {
+  if (image && image.path) {
+    try {
+      isLoading.value = true;
+      // Asegurarnos de que la imagen tenga la estructura correcta
+      const imageData = {
+        type: 'local',
+        file: image.path,
+        path: image.path,
+        id: image.id,
+        name: image.name
+      };
+      
+      // Actualizar la imagen en el PageBuilder
+      await pageBuilder.updateBasePrimaryImage(imageData);
+      
+      // Actualizar el estado local
+      pageBuilderStateStore.setBasePrimaryImage(image.path);
+      
+      showMediaLibraryModal.value = false;
+    } catch (error) {
+      console.error('Error al actualizar la imagen:', error);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 };
 </script>
+
 <template>
-  <div v-if="getBasePrimaryImage !== null">
+  <div v-if="getBasePrimaryImage" class="space-y-2">
     <img
-      class="object-cover object-center w-full cursor-pointer"
+      class="object-cover object-center w-full cursor-pointer rounded-lg border border-gray-200"
       :src="getBasePrimaryImage"
       @click="handleAddImage"
       alt="image"
     />
+    <p class="text-xs text-gray-500 text-center">Haga clic en la imagen para cambiarla</p>
   </div>
+  <div v-else class="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-myPrimaryLinkColor" @click="handleAddImage">
+    <div class="text-center">
+      <span class="material-symbols-outlined text-gray-400 text-3xl">add_photo_alternate</span>
+      <p class="text-sm text-gray-500">Haga clic para seleccionar una imagen</p>
+    </div>
+  </div>
+
   <MediaLibraryModal
     :open="showMediaLibraryModal"
     :title="titleMedia"
@@ -74,9 +97,7 @@ const handleAddImage = function () {
     :firstButtonText="firstButtonMedia"
     :secondButtonText="secondButtonMedia"
     :thirdButtonText="thirdButtonMedia"
-    @firstMediaButtonFunction="firstMediaButtonFunction"
-    @secondMediaButtonFunction="secondMediaButtonFunction"
-    @thirdMediaButtonFunction="thirdMediaButtonFunction"
-  >
-  </MediaLibraryModal>
+    @firstMediaButtonFunction="handleCloseModal"
+    @secondMediaButtonFunction="handleImageSelect"
+  />
 </template>

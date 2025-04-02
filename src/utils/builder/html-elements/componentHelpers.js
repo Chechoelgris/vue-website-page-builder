@@ -10,9 +10,9 @@ const componentHelpers = [
             <div class="flex items-center justify-between py-6 md:justify-start md:space-x-10">
               <!-- Logo -->
               <div class="flex justify-start lg:w-0 lg:flex-1">
-                <a href="#" class="flex items-center">
-                  <img class="h-8 w-auto sm:h-10" src="https://via.placeholder.com/150x50" alt="Logo">
-                </a>
+                <div class="flex items-center">
+                  <img class="h-8 w-auto sm:h-10" src="/placeholder-logo.png" alt="Logo">
+                </div>
               </div>
 
               <!-- Navigation Links -->

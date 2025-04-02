@@ -9,12 +9,13 @@ const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
 };
 
+// Obtener la imagen del logo desde el PageBuilder
+const logoImage = computed(() => {
+  return pageBuilderStateStore.getBasePrimaryImage;
+});
+
 // Props editables que se pueden personalizar desde el editor
 const props = defineProps({
-  logoUrl: {
-    type: String,
-    default: 'https://via.placeholder.com/150x50'
-  },
   menuItems: {
     type: Array,
     default: () => [
@@ -42,7 +43,7 @@ const props = defineProps({
         <!-- Logo -->
         <div class="flex justify-start lg:w-0 lg:flex-1">
           <a :href="props.ctaUrl" class="flex items-center">
-            <img class="h-8 w-auto sm:h-10" :src="props.logoUrl" alt="Logo">
+            <img class="h-8 w-auto sm:h-10" :src="logoImage" alt="Logo">
           </a>
         </div>
 
