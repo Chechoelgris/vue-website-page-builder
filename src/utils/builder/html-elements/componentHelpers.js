@@ -4,6 +4,53 @@
 const componentHelpers = [
   {
     html_code: `
+      <section>
+        <div class="relative bg-white">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            <div class="flex items-center justify-between py-6 md:justify-start md:space-x-10">
+              <!-- Logo -->
+              <div class="flex justify-start lg:w-0 lg:flex-1">
+                <a href="#" class="flex items-center">
+                  <img class="h-8 w-auto sm:h-10" src="https://via.placeholder.com/150x50" alt="Logo">
+                </a>
+              </div>
+
+              <!-- Navigation Links -->
+              <nav class="hidden space-x-10 md:flex">
+                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900">Inicio</a>
+                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900">Servicios</a>
+                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900">Nosotros</a>
+                <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900">Contacto</a>
+              </nav>
+
+              <!-- CTA Button -->
+              <div class="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+                <a href="#" class="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-myPrimaryLinkColor px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700">
+                  Contactar
+                </a>
+              </div>
+
+              <!-- Mobile menu button -->
+              <div class="-my-2 -mr-2 md:hidden">
+                <button type="button" class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500">
+                  <span class="material-symbols-outlined">menu</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `,
+    id: null,
+    title: 'Navigation Bar',
+    icon: `
+      <span class="material-symbols-outlined">
+        menu
+      </span>
+    `
+  },
+  {
+    html_code: `
         <section>
         <div class="relative py-4">
         <div class="mx-auto max-w-7xl lg:px-4 px-2">

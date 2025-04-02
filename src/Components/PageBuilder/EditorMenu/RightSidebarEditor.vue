@@ -11,6 +11,7 @@ import BackgroundColorEditor from '@/Components/PageBuilder/EditorMenu/Editables
 import Borders from '@/Components/PageBuilder/EditorMenu/Editables/Borders.vue';
 import LinkEditor from '@/Components/PageBuilder/EditorMenu/Editables/LinkEditor.vue';
 import TipTap from '@/Components/TipTap/TipTap.vue';
+import NavbarEditor from '@/Components/PageBuilder/Navbar/NavbarEditor.vue';
 import { usePageBuilderStateStore } from '@/stores/page-builder-state';
 
 const pageBuilderStateStore = usePageBuilderStateStore();
@@ -35,6 +36,10 @@ const isHeadingElement = computed(() => {
     getElement.value instanceof HTMLImageElement
   );
 });
+
+const isNavbarElement = computed(() => {
+  return getElement.value?.classList.contains('navbar-component');
+});
 </script>
 
 <template>
@@ -57,6 +62,11 @@ const isHeadingElement = computed(() => {
       </div>
 
       <div class="pl-3 pr-3 mb-4 overflow-y-scroll md:pb-24 pb-12">
+        <!-- Navbar Editor -->
+        <article v-if="isNavbarElement">
+          <NavbarEditor />
+        </article>
+
         <div v-show="isHeadingElement === true">
           <article>
             <ImageEditor> </ImageEditor>

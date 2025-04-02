@@ -1,0 +1,122 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guía para crear nuevos componentes en el Page Builder
+globs: ["src/Components/**/*.vue", "src/utils/builder/**/*.js"]
+alwaysApply: true
+---
+
+# Guía para Crear Nuevos Componentes
+
+## Estructura de Archivos
+
+```plaintext
+src/
+├── Components/
+│   └── PageBuilder/
+│       └── [TuComponente]/
+│           ├── [TuComponente]Component.vue
+│           ├── [TuComponente]Editor.vue
+│           └── [TuComponente]Preview.vue
+└── utils/
+    └── builder/
+        └── html-elements/
+            └── componentHelpers.js
+```
+
+## Pasos para Crear un Nuevo Componente
+
+### 1. Definir el Componente Base
+
+Añade tu componente en `@src/utils/builder/html-elements/componentHelpers.js`:
+
+```javascript
+{
+    html_code: `
+        <section>
+            <div class="relative py-4">
+                <!-- Tu HTML aquí -->
+            </div>
+        </section>
+    `,
+    id: null,
+    title: 'Nombre del Componente',
+    icon: `
+        <span class="material-symbols-outlined">
+            icono_aquí
+        </span>
+    `
+}
+```
+
+### 2. Crear los Archivos Vue
+
+#### ComponenteComponent.vue
+```vue
+<script setup>
+import { ref, computed } from 'vue';
+import { usePageBuilderStateStore } from '@/stores/page-builder-state';
+
+const pageBuilderStateStore = usePageBuilderStateStore();
+</script>
+
+<template>
+  <!-- Tu template aquí -->
+</template>
+```
+
+#### ComponenteEditor.vue
+```vue
+<script setup>
+import EditorAccordion from '../EditorMenu/EditorAccordion.vue';
+// Importa otros componentes necesarios
+</script>
+
+<template>
+  <EditorAccordion>
+    <!-- Opciones de edición aquí -->
+  </EditorAccordion>
+</template>
+```
+
+### 3. Integración con el Editor
+
+1. Añade tu componente al menú de edición en `@src/Components/PageBuilder/EditorMenu/RightSidebarEditor.vue`
+2. Registra las propiedades editables
+3. Implementa los métodos de actualización
+
+### 4. Estilos y Clases
+
+- Utiliza las clases de Tailwind existentes
+- Sigue los patrones de diseño del proyecto:
+  - `myPrimaryModule` para contenedores principales
+  - `myPrimarySection` para secciones
+  - `myPrimaryHeader` para encabezados
+
+### 5. Consideraciones Importantes
+
+- Mantén la consistencia con otros componentes
+- Usa los stores para el estado global
+- Implementa la edición en línea cuando sea posible
+- Asegúrate de que el componente sea responsive
+
+### 6. Testing
+
+1. Prueba la renderización inicial
+2. Verifica las opciones de edición
+3. Comprueba la persistencia de cambios
+4. Valida la vista previa
+5. Prueba la responsividad
+
+## Ejemplo de Uso
+
+@src/Components/PageBuilder/Example/ExampleComponent.vue
+@src/utils/builder/html-elements/componentHelpers.js
+
+## Referencias
+
+- Material Symbols: [https://fonts.google.com/icons](https://fonts.google.com/icons)
+- Tailwind CSS: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
